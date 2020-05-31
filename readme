@@ -1,0 +1,89 @@
+File Parser: Alpha.01
+
+INDEX:
+1 - Basic Information
+    1.1 Decription
+    1.2 Use Case
+
+2 - Config
+    2.1 Accessible Parameters
+    2.2 Usage
+
+3 - Return examples
+    3.1 Using data.txt supplied
+
+4 - Changelog
+
+5 - Potential Updates
+
+//////////////////////////////
+1 
+//////////////////////////////
+
+=> 1.1 Description
+    The File Parser takes a file given and iterates through the data in the file then returns the data in an array. 
+    The data itself is not changed, examined or stored externally. This data is 'read' in order to understand where 
+    the delimiter is to seperate however we make no attempt to actually use the data in any way other than to parse.
+
+=> 1.2 Use Case
+    As a person wanting to seperate a text file into more manageable, clear and delimited chunks
+    I want to be able to give a file and return the data in arrays formed from a delimiter of my choice
+    So that I can complete further work on the data easily.
+
+//////////////////////////////
+2
+//////////////////////////////        
+
+=> 2.1 Accessible Parameters:
+    File Parser takes 3 current params: 
+    1) filelist containing a single file (any format atm). 
+    2) a bool for parsing row 0. True says that you want to parse row 0 and include this in your data returned. Since many CSV's have headers this was required.
+    3) Mode. either "standard" or "debug"; not case sensitive, this tells the function to return useful data in console.
+    Optional 4) Delimiter, what to seperate on by default set to new line; '\n', can be overwritten. 
+
+=> 2.2 Usage:
+
+    Best usage would be to point a button or input update / on change to this function. 
+        <input type="file" onchange="function_name(this.files)"/>
+
+    Which would then point to:
+        let function_name = (files) => {
+            let variable = csv_parser(files, false, 'standard', '[')
+            console.log(variable)
+        }
+
+//////////////////////////////
+3
+//////////////////////////////  
+
+=> 3.1 Using Data.txt supplied
+    After setting up the function download the Data.txt to run through some test examples. This file contains a extract from a chat message; converted to lorem ipsum.
+    It contains 3 messages over 5 lines.
+
+    When we run this through the parser with the following:
+        csv_parser(files, false, 'debug')
+
+    We are asking it to use the following- file from select file form, ignore the first line in the CSV, debug mode and default delimiter which is '\n'. We are returned 
+    in console:
+        (4) [Array(12), Array(25), Array(4), Array(21)]
+
+    If we then amend the delimter to '[' => csv_parser(files, false, 'debug', '[') we are returned in console:
+        (3) [Array(28), Array(28), Array(21)]
+
+    If you get the above responses in console then it is working as intended.
+
+//////////////////////////////
+4       CHANGELOG
+//////////////////////////////  
+
+31/05/2020 File Parser Alpha.01 -- Initial Update
+Added all base files
+Added readme
+Added License
+
+//////////////////////////////
+5       Potential Updates
+////////////////////////////// 
+
+Currently single files - looking at handling multiple files
+Return csv headers in data structure when given false as parsing row 0
