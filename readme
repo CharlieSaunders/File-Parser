@@ -21,7 +21,8 @@ INDEX:
 //////////////////////////////
 
 => 1.1 Description
-    The File Parser takes a file given and iterates through the data in the file then returns the data in an array. 
+    The File Parser takes a file given and iterates through the data in the file then returns the data in an object
+    contianing the associated rows in the csv as an array. 
     The data itself is not changed, examined or stored externally. This data is 'read' in order to understand where 
     the delimiter is to seperate however we make no attempt to actually use the data in any way other than to parse.
 
@@ -35,22 +36,29 @@ INDEX:
 //////////////////////////////        
 
 => 2.1 Accessible Parameters:
-    File Parser takes 3 current params: 
-    1) filelist containing a single file (any format atm). 
-    2) a bool for parsing row 0. True says that you want to parse row 0 and include this in your data returned. Since many CSV's have headers this was required.
-    3) Mode. either "standard" or "debug"; not case sensitive, this tells the function to return useful data in console.
-    Optional 4) Delimiter, what to seperate on by default set to new line; '\n', can be overwritten. 
+    File Parser takes 3 current params (* is mandatory): 
+    *1) filelist containing a single file (any format atm). 
+    *2) a bool for parsing row 0. True says that you want to parse row 0 and include this in your data returned. 
+        Since many CSV's have headers this was required.
+    3) Delimiter, what to seperate on by default set to new line; '\n', can be overwritten.
 
 => 2.2 Usage:
 
     Best usage would be to point a button or input update / on change to this function. 
         <input type="file" onchange="function_name(this.files)"/>
 
+    YOUR FUNCTION is an example function, this can be changed to suit whatever you wish to do with the data. 500 is
+    the wait time for the function, increase this if you are returned undefined indexes in arrays when trying to
+    access them. 
+
     Which would then point to:
-        let function_name = (files) => {
-            let variable = csv_parser(files, false, 'standard', '[')
-            console.log(variable)
+        let data = [];
+        returned_data = (files) => {
+            data = file_parser(files, false);
+            setTimeout(function(){ YOUR FUNCTION (data)}, 500)
         }
+
+        if YOUR FUNCTION was a console.log(data[0]) you would see index 0 returned in data.
 
 //////////////////////////////
 3
@@ -61,14 +69,19 @@ INDEX:
     It contains 3 messages over 5 lines.
 
     When we run this through the parser with the following:
-        csv_parser(files, false, 'debug')
+        csv_parser(files, false)
 
-    We are asking it to use the following- file from select file form, ignore the first line in the CSV, debug mode and default delimiter which is '\n'. We are returned 
+    We are asking it to use the following- file from select file form, ignore the first line in the CSV, default delimiter which is '\n'. We are returned 
     in console:
-        (4) [Array(12), Array(25), Array(4), Array(21)]
+        (4) [Array(15), Array(25), Array(4), Array(21)]
 
-    If we then amend the delimter to '[' => csv_parser(files, false, 'debug', '[') we are returned in console:
-        (3) [Array(28), Array(28), Array(21)]
+    If we then amend the delimter to '[' => csv_parser(files, false, '[') we are returned in console:
+        (3) [Array(18), Array(28), Array(21)]
+
+    Finally to test that it is indeed reading from line 1 in the above and ignoring the headers csv_parser(files, true)
+        (5) [Array(12), Array(15), Array(25), Array(4), Array(21)]
+        in which
+        0: (12) ["header1,", "header2,", "header3,", "header4,", "header5,", "header6,", "header7,", "header8,", "header9,", "header10,", "header11,", "header12"]
 
     If you get the above responses in console then it is working as intended.
 
@@ -76,14 +89,33 @@ INDEX:
 4       CHANGELOG
 //////////////////////////////  
 
-31/05/2020 File Parser Alpha.01 -- Initial Update
-Added all base files
-Added readme
-Added License
+02/06/2020
+Functionality:
+    Removed unused or unneeded statements to increase execution time. 
+    Cleaned up variable names 
+    Amended Data.txt to include faux headers to aid in representing the return_0 param.
 
+Added:
+    Added set timeout in the core function due to asynch calls.
+
+
+Removed:
+    Removed debugging to bring back in a future update more cleanly.
+    Removed Mode as per above
+END
+
+31/05/2020 File Parser Alpha.01 -- Initial Update
+    Added all base files
+    Added readme
+    Added License
+END
 //////////////////////////////
 5       Potential Updates
 ////////////////////////////// 
+* WIP currently
 
-Currently single files - looking at handling multiple files
-Return csv headers in data structure when given false as parsing row 0
+
+*Create clean debugging
+*Add in ability to handle escaped characters/strings.
+*Investigate alternate to the async waiting. Potential promise instead.
+Validation that all cells have been filled if required.

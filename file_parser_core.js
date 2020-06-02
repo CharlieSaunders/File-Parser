@@ -1,31 +1,27 @@
 /////////////////////////////////////////////
 //              CSV Parser Alpha           //
 /////////////////////////////////////////////
-
-function csv_parser(file, parse_row_0, mode, delimiter){
-    //debug vars
-        let debug_data = [];
-        let debug_start = performance.now(2);
-    //
+let data_words = [];
+function file_parser(file, parse_row_0, row_delimiter){
     if(file == null || parse_row_0 == null){
-        console.error("Expected 2 core params for CSV parse. File (F) and Bool for parsing row 0 (0).")
-        console.error("(F) %o, (0) %s, Mode = %s.", file[0], parse_row_0, mode)
+        console.error("Expected 2 core params for CSV parse. File (F), Bool for parsing row 0 (0) and mode.\n(F) %o,\n(0) %s", file[0], parse_row_0,); 
+        errorer("failed_parse");
         return 0;
-    }else{
-        let debug_params = performance.now(2); debug_data.push((debug_params - debug_start).toFixed(3))
-        handle_file(file)
     }
+    
+    handle_file(file)
 
-    delimiter = delimiter || '\n'
-    let returned_data = [];
+    row_delimiter = row_delimiter || '\n'; 
     let data_array = [];
-    let row_0 = parse_row_0;
+    let parse_start = 0;
+    if(parse_row_0 == true){parse_start = 0}else{parse_start = 1}
 
     function handle_file(file){
         if(window.FileReader){
             convert_to_text(file[0]);
         }else{
-            alert("File Reader API not supported in this browser.");
+            errorer("failed_file_handler");
+            return 0;
         }
     }
 
@@ -42,58 +38,35 @@ function csv_parser(file, parse_row_0, mode, delimiter){
     }
 
     function process_data(data){
-        let debug_process = performance.now(2)
-        let raw_data_array = data.split(delimiter);
-        if(row_0 == true){
-            for(i = 0; i < raw_data_array.length; i++){
-              data_array.push(raw_data_array[i]);
-            }
+        let raw_data_array = data.split(row_delimiter);
+        for(i = parse_start; i < raw_data_array.length; i++){
+            data_array.push(raw_data_array[i]);
         }
-        else{
-            for(i = 1; i < raw_data_array.length; i++){
-              data_array.push(raw_data_array[i]);
-            }
-        }
-        let debug_processed = performance.now(2) - debug_process; debug_data.push(debug_processed.toFixed(3))
         insert_data(data_array);
     }
 
+    function insert_data(data_array){
+        for(i = 0; i<data_array.length; i++){
+            let string = data_array[i].split(" ")
+            data_words.push(string)
+        }
+    }
+    return data_words
+
+// errorer
     function errorer(event){
         if(event.target.error.name == "NotReadableError"){
             alert("Unable to read the file given");
         }
-    }
-
-    function insert_data(data_array){
-        let debug_insert = performance.now(2)
-        for(i = 0; i<data_array.length; i++){
-            let data_words = data_array[i].split(" ");
-            returned_data.push(data_words);
+        if(event == "failed_parse"){
+            alert("Failed parsing of parameters check console for more verbose error.")
         }
-        let debug_inserted = performance.now(2) - debug_insert; debug_data.push(debug_inserted.toFixed(3))
-        if(mode.toLowerCase() == "debug"){
-            debug_log(returned_data, file, parse_row_0, mode, delimiter, debug_data);
-            return 0;
-        }else{
-            return returned_data;
+        if(event == "failed_file_handler"){
+            alert("File handler not supported or an error with the file handler in the browser.")
         }
+        return 0
     }
-    return returned_data;
-}
-//////////////////////////////////////////////////////////////////
-//                            debug                             //
-//////////////////////////////////////////////////////////////////
-function debug_log(returned_data, file, parse_row_0, mode, delimiter, debug_data){
-    if(delimiter == '\n'){delimiter = 'Default \\n'}
-    if(delimiter == '\r'){delimiter = 'New Row \\r'}
-    console.log("%cDEBUG DATA FOR CSV PARSER","color: white; background-color: green; width: 100%;")
-    console.warn("Debug enabled. Returning all function data...\nDebug mode still returns the data obj. ")
-    console.warn("(F) %s, (0) %s, Mode = %s, Delimiter = %s.", file[0], parse_row_0, mode, delimiter)
-    console.warn("Timestamps for performance check => \nParameter check = %s \nProcessing data = %s \nInserting data = %s", debug_data[0], debug_data[1], debug_data[2])
-    console.warn("Returned data below:")
-    console.log(returned_data)
-    console.log("%cEND OF DEBUG FOR PARSER","color: white; background-color: green; width: 100%;")
-    return returned_data
 }
 
 //////////////////////////////////////////////////////////////////
+
